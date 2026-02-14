@@ -1,28 +1,19 @@
 import { useState } from 'react'
+import { NavLink, Routes, Route } from 'react-router-dom'
 import './App.css'
 
+import Dashboard from './pages/Dashboard'
+import Medicine from './pages/Medicine'
+import Records from './pages/Records'
+import Appointments from './pages/Appointments'
+import Monitoring from './pages/Monitoring'
+
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'grid' },
-  { id: 'medicine', label: 'Medicine', icon: 'pill' },
-  { id: 'records', label: 'Records', icon: 'records' },
-  { id: 'appointments', label: 'Appointments', icon: 'heart' },
-  { id: 'monitoring', label: 'Monitoring', icon: 'calendar' },
-]
-
-const SAMPLE_APPOINTMENTS = [
-  { date: 'Sun, 15 Feb', time: '10:30 am', place: 'Quest Diagnostics', type: 'Blood Work' },
-  { date: 'Mon, 16 Feb', time: '10:30 am', place: 'Lab Corp', type: 'Blood succas' },
-  { date: 'Tue, 17 Feb', time: '10:30 am', place: 'Cho mama', type: 'this matumbo' },
-  { date: 'Wed, 18 Feb', time: '10:30 am', place: 'Inova Hospital', type: 'CT Scan' },
-  { date: 'Thur, 19 Feb', time: '10:30 am', place: 'Patient First', type: 'Random Checkup' },
-]
-
-const ACTIVE_MONITORING_OPTIONS = [
-  'View Blood Pressure Stats',
-  'View Sleep Activity',
-  'View Weight loss',
-  'View Heart Rate',
-  'View Glucose Levels',
+  { id: 'dashboard', path: '/', label: 'Dashboard', icon: 'grid' },
+  { id: 'medicine', path: '/medicine', label: 'Medicine', icon: 'pill' },
+  { id: 'records', path: '/records', label: 'Records', icon: 'records' },
+  { id: 'appointments', path: '/appointments', label: 'Appointments', icon: 'heart' },
+  { id: 'monitoring', path: '/monitoring', label: 'Monitoring', icon: 'calendar' },
 ]
 
 function Icon({ name, className }) {
@@ -71,15 +62,7 @@ function Icon({ name, className }) {
 }
 
 function App() {
-  const [activeNav, setActiveNav] = useState('dashboard')
   const [menuOpen, setMenuOpen] = useState(false)
-  const [monitoringStat] = useState(() =>
-    ACTIVE_MONITORING_OPTIONS[Math.floor(Math.random() * ACTIVE_MONITORING_OPTIONS.length)]
-  )
-
-  function handleMonitoringBarClick() {
-    console.log('Active monitoring:', monitoringStat)
-  }
 
   return (
     <div className="app">
@@ -92,81 +75,28 @@ function App() {
       <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
         <nav className="sidebar-nav">
           {NAV_ITEMS.map((item) => (
-            <button
-              type="button"
+            <NavLink
               key={item.id}
-              className={`nav-item ${activeNav === item.id ? 'nav-item-active' : ''}`}
-              onClick={() => {
-                setActiveNav(item.id)
-                setMenuOpen(false)
-              }}
+              to={item.path}
+              className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
+              onClick={() => setMenuOpen(false)}
             >
               <Icon name={item.icon} className="nav-icon" />
               <span>{item.label}</span>
-            </button>
+            </NavLink>
           ))}
         </nav>
       </aside>
 
       <main className="main">
-        <section className="dashboard-section">
-          <h1 className="section-title">Dashboard Grid</h1>
-          <div className="dashboard-grid">
-            <div className="card profile-card">
-              <h2 className="card-title">Profile</h2>
-              <div className="profile-avatar" aria-hidden />
-              <p className="profile-name">John Doe</p>
-            </div>
-            <div className="card streak-card">
-              <h2 className="card-title">Medicine Streak</h2>
-              <div className="streak-icon" aria-hidden>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-                </svg>
-              </div>
-              <p className="streak-value">8 Day Streak</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            className="active-monitoring-bar"
-            onClick={handleMonitoringBarClick}
-          >
-            <div className="active-monitoring-bar-left">
-              <span className="active-monitoring-bar-title">Active monitoring</span>
-              <span className="active-monitoring-bar-subtitle">1 active metric</span>
-            </div>
-            <div className="active-monitoring-bar-right">
-              <span className="active-monitoring-bar-cta">{monitoringStat}</span>
-              <svg className="active-monitoring-bar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-              <span className="active-monitoring-bar-more">…</span>
-            </div>
-          </button>
-        </section>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/medicine" element={<Medicine />} />
+          <Route path="/records" element={<Records />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/monitoring" element={<Monitoring />} />
+        </Routes>
       </main>
-
-      <aside className="appointments-panel">
-        <h2 className="panel-title">Upcoming Appointments</h2>
-        <ul className="appointments-list">
-          {SAMPLE_APPOINTMENTS.map((apt, i) => (
-            <li key={i} className="appointment-item">
-              <div className="appointment-info">
-                <span className="appointment-date">{apt.date}</span>
-                <span className="appointment-time">{apt.time}</span>
-                <span className="appointment-place">{apt.place}</span>
-                <span className="appointment-type">{apt.type}</span>
-              </div>
-              <button type="button" className="appointment-action" aria-label="View appointment">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
 
       {menuOpen && (
         <div className="sidebar-overlay" onClick={() => setMenuOpen(false)} aria-hidden />
