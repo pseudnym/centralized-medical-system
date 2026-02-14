@@ -1,6 +1,7 @@
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 import Home from './pages/Home'
 import Establishments from './pages/Establishments'
+import EstablishmentDetail from './pages/EstablishmentDetail'
 
 function Layout() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="establishments" element={<Establishments />} />
+        <Route path="establishments/:id" element={<EstablishmentDetail />} />
       </Route>
     </Routes>
   )

@@ -27,8 +27,12 @@ def create_app() -> Flask:
     # API v1 blueprints
     from backend.controllers.health import health_bp
     from backend.controllers.establishments import establishments_bp
+    from backend.controllers.patients import patients_bp
+    from backend.controllers.records import records_bp
     app.register_blueprint(health_bp, url_prefix="/api/v1")
     app.register_blueprint(establishments_bp, url_prefix="/api/v1")
+    app.register_blueprint(patients_bp, url_prefix="/api/v1")
+    app.register_blueprint(records_bp, url_prefix="/api/v1")
 
     # CORS for frontend origin
     CORS(app, origins=[FRONTEND_ORIGIN], supports_credentials=True)

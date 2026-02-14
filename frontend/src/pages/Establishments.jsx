@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getEstablishments } from '../api'
 
 export default function Establishments() {
@@ -23,7 +24,9 @@ export default function Establishments() {
       <ul className="mt-4 space-y-2">
         {list.map((e) => (
           <li key={e.id} className="rounded border bg-white p-3 shadow-sm">
-            <span className="font-medium">{e.name}</span>
+            <Link to={`/establishments/${e.id}`} className="font-medium text-blue-600 hover:underline">
+              {e.name}
+            </Link>
             {e.address && <span className="ml-2 text-gray-600">— {e.address}</span>}
           </li>
         ))}

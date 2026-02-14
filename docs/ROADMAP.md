@@ -84,18 +84,18 @@ See also: [VISION.md](VISION.md), [RAW_IDEAS.md](RAW_IDEAS.md), [SYSTEM_DESIGN.m
 
 **Backend**
 
-- [ ] Implement **Establishments**: `GET /api/v1/establishments`, `GET /api/v1/establishments/:id` (list and get one). Use existing models and services; enforce no tenant filter on establishment list (establishments are global).
-- [ ] Implement **Patients**: `GET /api/v1/patients` (optionally filter by `X-Establishment-Id` for clinician view), `GET /api/v1/patients/:id`, `POST /api/v1/patients`. Persist with audit fields.
-- [ ] Implement **Records**: `GET /api/v1/establishments/:id/records` (list records for that establishment; optionally by patient). Return metadata only (id, file_name, patient_id, appointment_id if set, created_at).
-- [ ] Implement **Record upload**: `POST /api/v1/establishments/:id/records` with multipart/form-data for PDF; validate establishment and patient (e.g. from body or context); save file to configured uploads directory; store only file path/reference and metadata in DB per [SYSTEM_DESIGN](SYSTEM_DESIGN.md).
-- [ ] Implement **Record download**: `GET /api/v1/records/:id` (metadata), `GET /api/v1/records/:id/file` (serve file or redirect). Ensure path safety (no directory traversal).
+- [x] Implement **Establishments**: `GET /api/v1/establishments`, `GET /api/v1/establishments/:id` (list and get one). Use existing models and services; enforce no tenant filter on establishment list (establishments are global).
+- [x] Implement **Patients**: `GET /api/v1/patients` (optionally filter by `X-Establishment-Id` for clinician view), `GET /api/v1/patients/:id`, `POST /api/v1/patients`. Persist with audit fields.
+- [x] Implement **Records**: `GET /api/v1/establishments/:id/records` (list records for that establishment; optionally by patient). Return metadata only (id, file_name, patient_id, appointment_id if set, created_at).
+- [x] Implement **Record upload**: `POST /api/v1/establishments/:id/records` with multipart/form-data for PDF; validate establishment and patient (e.g. from body or context); save file to configured uploads directory; store only file path/reference and metadata in DB per [SYSTEM_DESIGN](SYSTEM_DESIGN.md).
+- [x] Implement **Record download**: `GET /api/v1/records/:id` (metadata), `GET /api/v1/records/:id/file` (serve file or redirect). Ensure path safety (no directory traversal).
 
 **Frontend**
 
-- [ ] **Establishments list page:** Fetch and display establishments; link each to establishment detail.
-- [ ] **Establishment detail page:** Show establishment name; fetch and list records for this establishment (by patient or flat list).
-- [ ] **Record upload:** On establishment detail, add “Upload PDF” (or similar); form with file input and optional patient selection; call upload API; refresh record list on success.
-- [ ] **Record view:** For each record, show name and a link to view/download file (opens in new tab or downloads via record file URL).
+- [x] **Establishments list page:** Fetch and display establishments; link each to establishment detail.
+- [x] **Establishment detail page:** Show establishment name; fetch and list records for this establishment (by patient or flat list).
+- [x] **Record upload:** On establishment detail, add “Upload PDF” (or similar); form with file input and optional patient selection; call upload API; refresh record list on success.
+- [x] **Record view:** For each record, show name and a link to view/download file (opens in new tab or downloads via record file URL).
 
 **Checkpoint:** User can open an establishment, see its records, upload a PDF, and open it. Demo narrative: “Records by establishment, like Canvas for medical records.”
 
