@@ -45,7 +45,7 @@ export default function Dashboard() {
             <p className="profile-name">John Doe</p>
           </div>
           <div className="card streak-card">
-            <h2 className="card-title">Medicine Streak</h2>
+            <h2 className="card-title">Prescription Streak</h2>
             <div className="streak-icon" aria-hidden>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
@@ -54,7 +54,7 @@ export default function Dashboard() {
             <p className="streak-value">8 Day Streak</p>
           </div>
           <div className="card meds-progress-card">
-            <h2 className="card-title">Medications today</h2>
+            <h2 className="card-title">Prescriptions today</h2>
             <div className="meds-progress-circle-wrap">
               <svg className="meds-progress-svg" viewBox="0 0 100 100" aria-hidden>
                 <circle

@@ -3,14 +3,14 @@ import { NavLink, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
 import Dashboard from './pages/Dashboard'
-import Medicine from './pages/Medicine'
+import Prescriptions from './pages/Prescriptions'
 import Records from './pages/Records'
 import Appointments from './pages/Appointments'
 import Monitoring from './pages/Monitoring'
 
 const NAV_ITEMS = [
   { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: 'grid' },
-  { id: 'medicine', path: '/medicine', label: 'Medicine', icon: 'pill' },
+  { id: 'prescriptions', path: '/prescriptions', label: 'Prescriptions', icon: 'pill' },
   { id: 'records', path: '/records', label: 'Records', icon: 'records' },
   { id: 'appointments', path: '/appointments', label: 'Appointments', icon: 'heart' },
   { id: 'monitoring', path: '/monitoring', label: 'Monitoring', icon: 'calendar' },
@@ -92,7 +92,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/medicine" element={<Medicine />} />
+          <Route path="/prescriptions" element={<Prescriptions />} />
           <Route path="/records" element={<Records />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/monitoring" element={<Monitoring />} />
