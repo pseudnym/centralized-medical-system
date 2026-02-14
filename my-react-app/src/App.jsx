@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Routes, Route } from 'react-router-dom'
+import { NavLink, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
 import Dashboard from './pages/Dashboard'
@@ -9,7 +9,7 @@ import Appointments from './pages/Appointments'
 import Monitoring from './pages/Monitoring'
 
 const NAV_ITEMS = [
-  { id: 'dashboard', path: '/', label: 'Dashboard', icon: 'grid' },
+  { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: 'grid' },
   { id: 'medicine', path: '/medicine', label: 'Medicine', icon: 'pill' },
   { id: 'records', path: '/records', label: 'Records', icon: 'records' },
   { id: 'appointments', path: '/appointments', label: 'Appointments', icon: 'heart' },
@@ -90,7 +90,8 @@ function App() {
 
       <main className="main">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/medicine" element={<Medicine />} />
           <Route path="/records" element={<Records />} />
           <Route path="/appointments" element={<Appointments />} />

@@ -37,7 +37,7 @@ export default function Dashboard() {
   return (
     <>
       <section className="dashboard-section">
-        <h1 className="section-title">Dashboard Grid</h1>
+        <h1 className="section-title">Dashboard</h1>
         <div className="dashboard-grid">
           <div className="card profile-card">
             <h2 className="card-title">Profile</h2>
