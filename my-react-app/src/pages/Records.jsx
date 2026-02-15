@@ -2,11 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getRecords, deleteRecord, CATEGORIES } from '../api/records'
 
-const VIEW_FIELDS = [
-  'id',
-  'title',
-  'patient_id',
-  'appointment_id',
+const OBSERVATION_COLUMNS = [
   'code',
   'category',
   'value_numeric',
@@ -15,29 +11,46 @@ const VIEW_FIELDS = [
   'reference_low',
   'reference_high',
   'occurrence_datetime',
-  'created_at',
-  'updated_at',
 ]
 
 function fieldLabel(field) {
   return field.replace(/_/g, ' ')
 }
 
-function formatValue(record, field) {
-  const v = record[field]
-  if (v == null || v === '') return '—'
-  if (field === 'created_at' || field === 'updated_at' || field === 'occurrence_datetime') {
+function formatCellValue(value, field) {
+  if (value == null || value === '') return '—'
+  if (field === 'occurrence_datetime') {
     try {
-      return new Date(v).toLocaleString()
+      return new Date(value).toLocaleString()
     } catch {
-      return String(v)
+      return String(value)
     }
   }
-  return String(v)
+  return String(value)
+}
+
+/** Build rows for the entries table: use _observations when present, else one row from record. */
+function getViewRows(record) {
+  if (!record) return []
+  const obs = record._observations
+  if (obs?.length > 0) return obs
+  return [
+    {
+      code: record.code,
+      category: record.category,
+      value_numeric: record.value_numeric,
+      value_text: record.value_text,
+      unit: record.unit,
+      reference_low: record.reference_low,
+      reference_high: record.reference_high,
+      occurrence_datetime: record.occurrence_datetime,
+    },
+  ]
 }
 
 function RecordViewModal({ record, onClose }) {
   const panelRef = useRef(null)
+  const rows = record ? getViewRows(record) : []
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -65,16 +78,41 @@ function RecordViewModal({ record, onClose }) {
         <h2 id="record-view-title" className="record-view-title">
           Medical Record
         </h2>
-        <table className="record-view-table">
-          <tbody>
-            {VIEW_FIELDS.map((field) => (
-              <tr key={field}>
-                <th className="record-view-th">{fieldLabel(field)}</th>
-                <td className="record-view-td">{formatValue(record, field)}</td>
+        <div className="record-view-meta">
+          <span>Record ID: {record.id}</span>
+          {record.patient_id != null && <span>Patient: {record.patient_id}</span>}
+          {record.appointment_id != null && <span>Appointment: {record.appointment_id}</span>}
+          {record.created_at && (
+            <span>Created: {new Date(record.created_at).toLocaleString()}</span>
+          )}
+          {record.updated_at && (
+            <span>Updated: {new Date(record.updated_at).toLocaleString()}</span>
+          )}
+        </div>
+        <div className="record-view-entries-wrap">
+          <table className="record-view-entries-table">
+            <thead>
+              <tr>
+                {OBSERVATION_COLUMNS.map((col) => (
+                  <th key={col} className="record-view-entries-th">
+                    {fieldLabel(col)}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={row.id ?? i} className="record-view-entries-tr">
+                  {OBSERVATION_COLUMNS.map((col) => (
+                    <td key={col} className="record-view-entries-td">
+                      {formatCellValue(row[col], col)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {record._attachments?.length > 0 && (
           <div className="record-view-attachments">
             <strong>Attachments:</strong>{' '}

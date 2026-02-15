@@ -1,13 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '../contexts/UserContext'
-
-const SAMPLE_APPOINTMENTS = [
-  { date: 'Sun, 15 Feb', time: '10:30 am', place: 'Quest Diagnostics', type: 'Blood Work' },
-  { date: 'Mon, 16 Feb', time: '10:30 am', place: 'Lab Corp', type: 'Blood succas' },
-  { date: 'Tue, 17 Feb', time: '10:30 am', place: 'Cho mama', type: 'this matumbo' },
-  { date: 'Wed, 18 Feb', time: '10:30 am', place: 'Inova Hospital', type: 'CT Scan' },
-  { date: 'Thur, 19 Feb', time: '10:30 am', place: 'Patient First', type: 'Random Checkup' },
-]
+import { getSession } from '../api/auth'
+import { getUpcomingAppointments } from '../api/appointments'
 
 const ACTIVE_MONITORING_OPTIONS = [
   'View Blood Pressure Stats',
@@ -24,6 +18,27 @@ export default function Dashboard() {
   const [monitoringStat] = useState(() =>
     ACTIVE_MONITORING_OPTIONS[Math.floor(Math.random() * ACTIVE_MONITORING_OPTIONS.length)]
   )
+  const [upcomingAppointments, setUpcomingAppointments] = useState([])
+  const [upcomingLoading, setUpcomingLoading] = useState(true)
+  const [upcomingError, setUpcomingError] = useState(null)
+
+  useEffect(() => {
+    setUpcomingLoading(true)
+    setUpcomingError(null)
+    getSession()
+      .then((session) => session?.user?.id ?? null)
+      .then((userId) => getUpcomingAppointments(userId))
+      .then(({ data, error }) => {
+        setUpcomingAppointments(data ?? [])
+        setUpcomingError(error ? error.message || 'Could not load appointments' : null)
+        setUpcomingLoading(false)
+      })
+      .catch((err) => {
+        setUpcomingAppointments([])
+        setUpcomingError(err?.message || 'Could not load appointments')
+        setUpcomingLoading(false)
+      })
+  }, [])
 
   function handleMonitoringBarClick() {
     console.log('Active monitoring:', monitoringStat)
@@ -107,23 +122,33 @@ export default function Dashboard() {
 
       <aside className="appointments-panel">
         <h2 className="panel-title">Upcoming Appointments</h2>
-        <ul className="appointments-list">
-          {SAMPLE_APPOINTMENTS.map((apt, i) => (
-            <li key={i} className="appointment-item">
-              <div className="appointment-info">
-                <span className="appointment-date">{apt.date}</span>
-                <span className="appointment-time">{apt.time}</span>
-                <span className="appointment-place">{apt.place}</span>
-                <span className="appointment-type">{apt.type}</span>
-              </div>
-              <button type="button" className="appointment-action" aria-label="View appointment">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {upcomingLoading ? (
+          <p className="appointments-loading">Loading…</p>
+        ) : upcomingError ? (
+          <p className="appointments-upcoming-error" title={upcomingError}>
+            Could not load appointments.
+          </p>
+        ) : upcomingAppointments.length === 0 ? (
+          <p className="appointments-upcoming-empty">No upcoming appointments.</p>
+        ) : (
+          <ul className="appointments-list">
+            {upcomingAppointments.map((apt) => (
+              <li key={apt.id} className="appointment-item">
+                <div className="appointment-info">
+                  <span className="appointment-date">{apt.date}</span>
+                  <span className="appointment-time">{apt.time}</span>
+                  <span className="appointment-place">{apt.place}</span>
+                  <span className="appointment-type">{apt.type}</span>
+                </div>
+                <button type="button" className="appointment-action" aria-label="View appointment">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </aside>
     </>
   )
