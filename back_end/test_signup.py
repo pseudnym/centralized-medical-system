@@ -8,6 +8,13 @@ url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_ANON_KEY")
 supabase: Client = create_client(url, key)
 
+# [SIGN UP]
+def sign_up():
+    print("yo gurt")
+    insert_email = input("Enter email: ")
+    insert_password = input("Enter password: ")
+    response = supabase.auth.sign_up({"email": insert_email, "password": insert_password})
+
 # [SIGN IN]
 email = "medical.test@email.com"
 password = "m3d1c4Lt35T"
@@ -39,13 +46,16 @@ else:
         print("Error during signup:", e)
 # [SEND DATA]
 
-patient = {
-    "name": "Lou Gehrig",
-    "email": email,
-    "dob": "2000-10-15",
-    "user_id": user_id
-}
-
+# SCUFFED FUNCTION BUT YOU GET THE IDEA BEHIND THE METH OF THE MADNESS
+'''
+def send_patient(name="Lou Gehrig", email=email, dob="2000-10-15", user_id):
+    patient = {
+        "name": name,
+        "email": email,
+        "dob": "2000-10-15",
+        "user_id": user_id
+    }
+'''
 appointment = {
     "patient_id": 1,
     "scheduled_for": "2026-2-14 6:30",
@@ -53,5 +63,8 @@ appointment = {
     "reason": "lou.gehrig@example.com"
 }
 
-response = supabase.table("patient").insert(patient).execute()
-response = supabase.table("appointment").insert(appointment).execute()
+#response = supabase.table("patient").insert(patient).execute()
+#response = supabase.table("appointment").insert(appointment).execute()
+response = (supabase.table("patient").select("*").execute())
+#print(response)
+sign_up()
