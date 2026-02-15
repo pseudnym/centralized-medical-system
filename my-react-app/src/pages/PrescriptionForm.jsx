@@ -23,6 +23,7 @@ export default function PrescriptionForm() {
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [notFound, setNotFound] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     if (!isEdit) return
@@ -52,6 +53,7 @@ export default function PrescriptionForm() {
     const trimmedName = name.trim()
     if (!trimmedName) return
 
+    setSaveError('')
     const payload = {
       name: trimmedName,
       instructions: instructions.trim(),
@@ -68,7 +70,11 @@ export default function PrescriptionForm() {
     setSaving(true)
     if (isEdit) {
       updatePrescription(id, payload)
-        .then((updated) => {
+        .then(({ data: updated, error }) => {
+          if (error) {
+            setSaveError(error.message || 'Failed to save')
+            return
+          }
           if (updated == null) {
             setNotFound(true)
             return
@@ -79,9 +85,15 @@ export default function PrescriptionForm() {
         .finally(() => setSaving(false))
     } else {
       createPrescription(payload)
-        .then(() => {
-          window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Successful!' } }))
-          navigate('/prescriptions')
+        .then(({ data, error }) => {
+          if (error) {
+            setSaveError(error.message || 'Failed to save')
+            return
+          }
+          if (data) {
+            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Successful!' } }))
+            navigate('/prescriptions')
+          }
         })
         .finally(() => setSaving(false))
     }
@@ -126,6 +138,12 @@ export default function PrescriptionForm() {
         </div>
       </div>
 
+      {saveError && (
+        <div className="auth-error" role="alert" style={{ marginBottom: '1rem' }}>
+          {saveError}
+        </div>
+      )}
+
       <div className="prescription-form-layout card">
         <div className="prescription-form-grid">
           <div className="prescription-form-field prescription-form-field-full">
@@ -162,7 +180,8 @@ export default function PrescriptionForm() {
             </label>
             <input
               id="prescription-provider-id"
-              type="text"
+              type="number"
+              min="0"
               className="prescription-form-input"
               value={medicalProviderId}
               onChange={(e) => setMedicalProviderId(e.target.value)}
@@ -235,11 +254,12 @@ export default function PrescriptionForm() {
             </label>
             <input
               id="prescription-dosage"
-              type="text"
+              type="number"
+              min="0"
               className="prescription-form-input"
               value={dosageStrength}
               onChange={(e) => setDosageStrength(e.target.value)}
-              placeholder="e.g. 10 mg"
+              placeholder="0"
             />
           </div>
 
@@ -249,11 +269,12 @@ export default function PrescriptionForm() {
             </label>
             <input
               id="prescription-frequency"
-              type="text"
+              type="number"
+              min="0"
               className="prescription-form-input"
               value={frequency}
               onChange={(e) => setFrequency(e.target.value)}
-              placeholder="e.g. Twice daily"
+              placeholder="0"
             />
           </div>
 

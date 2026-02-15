@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Routes, Route, Navigate } from 'react-router-dom'
+import { NavLink, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './App.css'
+import { getSession, onAuthStateChange, logout } from './api/auth'
+import { UserProvider, useUser } from './contexts/UserContext'
+import ivyCircleLogo from './ivy circle.png'
+import ivyMedLogo from './IvyMedlogo.png'
 
+import Login from './pages/Login'
+import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Prescriptions from './pages/Prescriptions'
 import PrescriptionForm from './pages/PrescriptionForm'
@@ -76,11 +82,12 @@ function Icon({ name, className }) {
   return <span className={className}>{icons[name] || null}</span>
 }
 
-function App() {
+function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [logoutModalOpen, setLogoutModalOpen] = useState(false)
   const [toast, setToast] = useState(null)
+  const { patientName } = useUser()
 
   function handleMenuToggle() {
     if (window.matchMedia('(min-width: 1025px)').matches) {
@@ -117,8 +124,13 @@ function App() {
 
       <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <button type="button" className="sidebar-header" onClick={handleMenuToggle} aria-label="Toggle menu">
-          <div className="sidebar-logo" aria-hidden />
-          <span className="sidebar-brand">Angel</span>
+          <img
+            src={sidebarCollapsed ? ivyCircleLogo : ivyMedLogo}
+            alt=""
+            className="sidebar-logo"
+            aria-hidden
+          />
+          <span className="sidebar-brand">Ivy Med</span>
         </button>
         <nav className="sidebar-nav">
           {NAV_ITEMS.map((item) => (
@@ -136,7 +148,7 @@ function App() {
         <div className="sidebar-bottom">
           <div className="sidebar-profile">
             <div className="sidebar-profile-avatar" aria-hidden />
-            <span className="sidebar-profile-text">Profile</span>
+            <span className="sidebar-profile-text">{patientName}</span>
           </div>
           <button type="button" className="sidebar-bottom-btn" aria-label="Settings">
             <Icon name="settings" className="sidebar-bottom-icon" />
@@ -182,7 +194,22 @@ function App() {
           aria-label="Logout"
         >
           <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
-            {/* Contents empty for now */}
+            <p className="logout-modal-text">Are you sure you want to sign out?</p>
+            <div className="logout-modal-actions">
+              <button type="button" className="logout-modal-cancel" onClick={() => setLogoutModalOpen(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="logout-modal-confirm"
+                onClick={() => {
+                  setLogoutModalOpen(false)
+                  logout()
+                }}
+              >
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -193,6 +220,61 @@ function App() {
         </div>
       )}
     </div>
+  )
+}
+
+function App() {
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const location = useLocation()
+
+  useEffect(() => {
+    getSession().then((s) => {
+      setSession(s)
+      setAuthLoading(false)
+    })
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((_event, s) => setSession(s))
+    return unsubscribe
+  }, [])
+
+  if (authLoading) {
+    return (
+      <div className="auth-page">
+        <div className="auth-panel-left">
+          <div className="auth-card" style={{ textAlign: 'center' }}>
+            <div className="auth-brand">
+              <img src={ivyCircleLogo} alt="Ivy Med" className="auth-logo auth-logo-img" />
+              <span className="auth-brand-name">Ivy Med</span>
+            </div>
+            <p className="auth-subtitle">Loading…</p>
+          </div>
+        </div>
+        <div className="auth-panel-right" />
+      </div>
+    )
+  }
+
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup'
+  if (isAuthPage && session) {
+    return <Navigate to="/dashboard" replace />
+  }
+  if (!isAuthPage && !session) {
+    return <Navigate to="/login" replace />
+  }
+  if (location.pathname === '/login') {
+    return <Login />
+  }
+  if (location.pathname === '/signup') {
+    return <Signup />
+  }
+
+  return (
+    <UserProvider>
+      <AppLayout />
+    </UserProvider>
   )
 }
 

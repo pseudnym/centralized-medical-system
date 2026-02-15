@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getPrescriptions } from '../api/prescriptions'
+import { getPrescriptions, deletePrescription } from '../api/prescriptions'
 
 const VIEW_FIELDS = [
   'name',
@@ -57,8 +57,10 @@ function ParchmentIcon({ className, size = 48 }) {
   )
 }
 
-function PrescriptionViewModal({ prescription, onClose, onEdit }) {
+function PrescriptionViewModal({ prescription, onClose, onEdit, onDeleted }) {
   const panelRef = useRef(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -67,6 +69,21 @@ function PrescriptionViewModal({ prescription, onClose, onEdit }) {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
+
+  async function handleDelete() {
+    if (!prescription?.id || deleting) return
+    setDeleteError('')
+    setDeleting(true)
+    const { ok, error } = await deletePrescription(prescription.id)
+    setDeleting(false)
+    if (error) {
+      setDeleteError(error.message || 'Failed to delete')
+      return
+    }
+    if (ok && onDeleted) {
+      onDeleted()
+    }
+  }
 
   if (!prescription) return null
 
@@ -86,6 +103,11 @@ function PrescriptionViewModal({ prescription, onClose, onEdit }) {
         <h2 id="prescription-view-title" className="prescription-view-title">
           Prescription
         </h2>
+        {deleteError && (
+          <div className="auth-error" role="alert" style={{ marginBottom: '0.75rem' }}>
+            {deleteError}
+          </div>
+        )}
         <table className="prescription-view-table">
           <tbody>
             {VIEW_FIELDS.map((field) => (
@@ -102,6 +124,15 @@ function PrescriptionViewModal({ prescription, onClose, onEdit }) {
               Edit
             </button>
           )}
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDelete}
+            disabled={deleting}
+            aria-label="Delete prescription"
+          >
+            {deleting ? 'Deleting…' : 'Delete'}
+          </button>
           <button type="button" className="btn btn-secondary prescription-view-close" onClick={onClose}>
             Close
           </button>
@@ -117,11 +148,15 @@ export default function Prescriptions() {
   const [viewPrescriptionId, setViewPrescriptionId] = useState(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
+  function refreshList() {
     setLoading(true)
     getPrescriptions()
       .then(setPrescriptions)
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    refreshList()
   }, [])
 
   const viewPrescription =
@@ -202,6 +237,11 @@ export default function Prescriptions() {
           onEdit={(id) => {
             setViewPrescriptionId(null)
             navigate(`/prescriptions/${id}/edit`)
+          }}
+          onDeleted={() => {
+            setViewPrescriptionId(null)
+            refreshList()
+            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Prescription removed.' } }))
           }}
         />
       )}
