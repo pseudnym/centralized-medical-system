@@ -29,7 +29,7 @@
   height: 68px;
   padding: 0 1.25rem;
   border: none;
-  background: transparent;
+  background: #0c2e1d;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -40,7 +40,7 @@
 }
 
 .sidebar-header:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: #0f3a24;
 }
 
 .sidebar.sidebar-collapsed .sidebar-header {
@@ -49,31 +49,25 @@
 }
 
 .sidebar.sidebar-collapsed .sidebar-header:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #0f3a24;
 }
 
 .sidebar-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: var(--teal);
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 1.125rem;
-}
-
-.sidebar-logo::before {
-  content: 'A';
+  display: block;
+  object-fit: contain;
 }
 
 .sidebar.sidebar-collapsed .sidebar-logo {
   width: 32px;
   height: 32px;
-  font-size: 1rem;
+  border-radius: 50%;
+}
+
+.sidebar:not(.sidebar-collapsed) .sidebar-logo {
+  height: 36px;
+  width: auto;
+  max-width: 140px;
 }
 
 .sidebar-brand {
@@ -85,9 +79,7 @@
   text-overflow: ellipsis;
   max-width: 10rem;
   transition: opacity 0.2s ease-out, max-width 0.25s ease-out;
-}
-
-.sidebar.sidebar-collapsed .sidebar-brand {
+  /* No text next to logo in expanded or collapsed */
   opacity: 0;
   max-width: 0;
   pointer-events: none;
@@ -425,6 +417,138 @@
   .active-monitoring-bar-cta {
     white-space: normal;
   }
+}
+
+/* ----- Dashboard chatbot ----- */
+.dashboard-chatbot {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 1rem 1.25rem;
+  min-height: 200px;
+  max-height: 320px;
+}
+
+.dashboard-chatbot .card-title {
+  margin: 0 0 0.75rem;
+}
+
+.chatbot-messages {
+  flex: 1;
+  min-height: 120px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chatbot-placeholder {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.chatbot-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.chatbot-message--user {
+  align-items: flex-end;
+}
+
+.chatbot-message--user .chatbot-message-content {
+  background: var(--teal);
+  color: #fff;
+  border-radius: 12px 12px 4px 12px;
+}
+
+.chatbot-message--assistant .chatbot-message-content {
+  background: var(--sidebar-bg);
+  color: var(--text-primary);
+  border-radius: 12px 12px 12px 4px;
+}
+
+.chatbot-message-role {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+
+.chatbot-message-content {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  max-width: 85%;
+}
+
+.chatbot-message--loading .chatbot-message-content {
+  opacity: 0.8;
+}
+
+.chatbot-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  transition: border-color 0.2s;
+}
+
+.chatbot-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.chatbot-input:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.chatbot-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.chatbot-send {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--teal);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.chatbot-send:hover:not(:disabled) {
+  background: var(--teal-active-bg);
+  color: var(--teal);
+}
+
+.chatbot-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .card {
@@ -2855,23 +2979,14 @@
 }
 
 .auth-logo {
-  width: 40px;
-  height: 40px;
-  background: var(--teal);
-  transform: rotate(45deg);
   flex-shrink: 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.auth-logo-inner {
-  width: 18px;
-  height: 18px;
-  background: var(--card-bg);
-  transform: rotate(0deg);
-  border-radius: 1px;
+.auth-logo.auth-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
 }
 
 .auth-brand-name {
@@ -3021,13 +3136,22 @@
   color: var(--teal-light);
 }
 
-/* Right panel — dark green with Introducing Angel */
+/* Right panel — dark green with Ivy Med logo and tagline */
 .auth-panel-right {
-  background: var(--teal);
+  background: #0c2e1d;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2rem;
   padding: 3rem;
+}
+
+.auth-panel-right-logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .auth-panel-right-tagline {

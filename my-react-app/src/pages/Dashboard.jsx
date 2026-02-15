@@ -13,6 +13,13 @@ const ACTIVE_MONITORING_OPTIONS = [
 
 const MEDS_TODAY = { taken: 5, total: 5 }
 
+// Placeholder: replace with Gemini API call later
+async function sendToChatBot(userMessage) {
+  // Simulate network delay; swap this for your Gemini API call
+  await new Promise((r) => setTimeout(r, 600))
+  return `This reply will come from Gemini. You said: "${userMessage}"`
+}
+
 export default function Dashboard() {
   const { patientName } = useUser()
   const [monitoringStat] = useState(() =>
@@ -21,6 +28,9 @@ export default function Dashboard() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([])
   const [upcomingLoading, setUpcomingLoading] = useState(true)
   const [upcomingError, setUpcomingError] = useState(null)
+  const [chatMessages, setChatMessages] = useState([])
+  const [chatInput, setChatInput] = useState('')
+  const [chatLoading, setChatLoading] = useState(false)
 
   useEffect(() => {
     setUpcomingLoading(true)
@@ -42,6 +52,26 @@ export default function Dashboard() {
 
   function handleMonitoringBarClick() {
     console.log('Active monitoring:', monitoringStat)
+  }
+
+  async function handleChatSend(e) {
+    e.preventDefault()
+    const text = chatInput.trim()
+    if (!text || chatLoading) return
+    setChatInput('')
+    setChatMessages((prev) => [...prev, { role: 'user', content: text }])
+    setChatLoading(true)
+    try {
+      const reply = await sendToChatBot(text)
+      setChatMessages((prev) => [...prev, { role: 'assistant', content: reply }])
+    } catch (err) {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' },
+      ])
+    } finally {
+      setChatLoading(false)
+    }
   }
 
   const medsTaken = MEDS_TODAY.taken
@@ -118,6 +148,45 @@ export default function Dashboard() {
             <span className="active-monitoring-bar-more">…</span>
           </div>
         </button>
+
+        <section className="dashboard-chatbot card">
+          <h2 className="card-title">Assistant</h2>
+          <div className="chatbot-messages" role="log" aria-live="polite">
+            {chatMessages.length === 0 ? (
+              <p className="chatbot-placeholder">Ask a question. Replies will come from Gemini once connected.</p>
+            ) : (
+              chatMessages.map((msg, i) => (
+                <div key={i} className={`chatbot-message chatbot-message--${msg.role}`}>
+                  <span className="chatbot-message-role">{msg.role === 'user' ? 'You' : 'Assistant'}</span>
+                  <p className="chatbot-message-content">{msg.content}</p>
+                </div>
+              ))
+            )}
+            {chatLoading && (
+              <div className="chatbot-message chatbot-message--assistant chatbot-message--loading">
+                <span className="chatbot-message-role">Assistant</span>
+                <p className="chatbot-message-content">Thinking…</p>
+              </div>
+            )}
+          </div>
+          <form className="chatbot-form" onSubmit={handleChatSend}>
+            <input
+              type="text"
+              className="chatbot-input"
+              placeholder="Type a message…"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              disabled={chatLoading}
+              aria-label="Message"
+            />
+            <button type="submit" className="chatbot-send" disabled={chatLoading || !chatInput.trim()} aria-label="Send">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </form>
+        </section>
       </section>
 
       <aside className="appointments-panel">

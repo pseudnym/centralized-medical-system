@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
+import ivyCircleLogo from '../ivy circle.png'
+import ivyMedLogo from '../IvyMedlogo.png'
 
 function EyeIcon({ show }) {
   return (
@@ -51,10 +53,8 @@ export default function Login() {
       <div className="auth-panel-left">
         <div className="auth-card">
           <div className="auth-brand">
-            <div className="auth-logo">
-              <span className="auth-logo-inner" />
-            </div>
-            <span className="auth-brand-name">Angel</span>
+            <img src={ivyCircleLogo} alt="Ivy Med" className="auth-logo auth-logo-img" />
+            <span className="auth-brand-name">Ivy Med</span>
           </div>
           <h1 className="auth-title">Sign in</h1>
           <p className="auth-subtitle">
@@ -112,8 +112,9 @@ export default function Login() {
       </div>
 
       <div className="auth-panel-right">
+        <img src={ivyMedLogo} alt="Ivy Med" className="auth-panel-right-logo" />
         <div className="auth-panel-right-tagline">
-          <p className="auth-panel-right-tagline-title">Introducing Angel</p>
+          <p className="auth-panel-right-tagline-title">Introducing Ivy Med</p>
           <p className="auth-panel-right-tagline-text">
             Your centralized health hub. Records, prescriptions, and appointments in one place.
           </p>

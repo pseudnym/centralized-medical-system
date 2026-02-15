@@ -3,6 +3,8 @@ import { NavLink, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './App.css'
 import { getSession, onAuthStateChange, logout } from './api/auth'
 import { UserProvider, useUser } from './contexts/UserContext'
+import ivyCircleLogo from './ivy circle.png'
+import ivyMedLogo from './IvyMedlogo.png'
 
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -122,8 +124,13 @@ function AppLayout() {
 
       <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <button type="button" className="sidebar-header" onClick={handleMenuToggle} aria-label="Toggle menu">
-          <div className="sidebar-logo" aria-hidden />
-          <span className="sidebar-brand">Angel</span>
+          <img
+            src={sidebarCollapsed ? ivyCircleLogo : ivyMedLogo}
+            alt=""
+            className="sidebar-logo"
+            aria-hidden
+          />
+          <span className="sidebar-brand">Ivy Med</span>
         </button>
         <nav className="sidebar-nav">
           {NAV_ITEMS.map((item) => (
@@ -239,8 +246,8 @@ function App() {
         <div className="auth-panel-left">
           <div className="auth-card" style={{ textAlign: 'center' }}>
             <div className="auth-brand">
-              <div className="auth-logo"><span className="auth-logo-inner" /></div>
-              <span className="auth-brand-name">Angel</span>
+              <img src={ivyCircleLogo} alt="Ivy Med" className="auth-logo auth-logo-img" />
+              <span className="auth-brand-name">Ivy Med</span>
             </div>
             <p className="auth-subtitle">Loading…</p>
           </div>
