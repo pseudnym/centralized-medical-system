@@ -476,3 +476,619 @@
     padding: 1rem;
   }
 }
+
+/* ----- Records list ----- */
+.records-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.records-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.records-add-btn {
+  flex-shrink: 0;
+}
+
+.records-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.records-filter-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.records-filter-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--sidebar-bg);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.records-loading {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.records-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.records-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.record-card {
+  position: relative;
+  padding: 1rem 1.25rem;
+  padding-right: 3rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.record-card:hover {
+  background: var(--bg-page);
+}
+
+.record-card-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.record-card-title {
+  font-weight: 600;
+  color: var(--teal);
+  font-size: 0.9375rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.record-category {
+  font-weight: 600;
+  color: var(--teal);
+  font-size: 0.9375rem;
+}
+
+.record-code {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.record-date {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+.record-summary {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.record-card-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+}
+
+.record-card-menu-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.record-card-menu-btn:hover {
+  background: var(--sidebar-bg);
+  color: var(--text-primary);
+}
+
+.record-card-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin: 0.25rem 0 0;
+  padding: 0.25rem;
+  list-style: none;
+  min-width: 120px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+
+.record-card-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: background 0.2s;
+}
+
+.record-card-dropdown-item:hover {
+  background: var(--bg-page);
+}
+
+/* ----- Record view modal ----- */
+.record-view-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.record-view-modal {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+.record-view-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.record-view-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.record-view-th,
+.record-view-td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--sidebar-bg);
+  vertical-align: top;
+}
+
+.record-view-th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 40%;
+}
+
+.record-view-td {
+  color: var(--text-primary);
+}
+
+.record-view-attachments {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.record-view-close {
+  margin-top: 0.5rem;
+}
+
+/* ----- Buttons ----- */
+.btn {
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: var(--teal);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--teal-light);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--sidebar-bg);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+
+/* ----- Record form ----- */
+.record-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.record-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.record-form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.record-form-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.record-form-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.record-form-sidebar {
+  flex: 0 0 280px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-left: 1px solid var(--sidebar-bg);
+}
+
+.record-form-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.record-form-sidebar-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.record-form-sidebar-heading {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.record-form-sidebar-sub {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.record-form-sidebar-input,
+.record-form-sidebar-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sidebar-bg);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--card-bg);
+}
+
+.record-form-sidebar-input:focus,
+.record-form-sidebar-select:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.record-form-templates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.record-form-template-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sidebar-bg);
+  border-radius: 8px;
+  background: var(--card-bg);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--teal);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.record-form-template-btn:hover {
+  background: var(--bg-page);
+  border-color: var(--teal);
+}
+
+@media (max-width: 900px) {
+  .record-form-layout {
+    flex-direction: column;
+  }
+
+  .record-form-sidebar {
+    flex: 1 1 100%;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--sidebar-bg);
+  }
+}
+
+.record-form-table-wrap {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.record-form-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.record-form-th,
+.record-form-td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--sidebar-bg);
+  white-space: nowrap;
+}
+
+.record-form-th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-page);
+}
+
+.record-form-th-actions,
+.record-form-td-actions {
+  width: 5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--sidebar-bg);
+  vertical-align: middle;
+}
+
+.record-form-tr {
+  background: var(--card-bg);
+}
+
+.record-form-tr-dragging {
+  opacity: 0.6;
+}
+
+.record-form-tr:hover {
+  background: var(--bg-page);
+}
+
+.record-form-input {
+  width: 100%;
+  min-width: 80px;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--sidebar-bg);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--card-bg);
+}
+
+.record-form-input:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.record-form-btn-add {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: var(--teal);
+  color: white;
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  transition: background 0.2s;
+}
+
+.record-form-btn-add:hover {
+  background: var(--teal-light);
+}
+
+.record-form-drag-handle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: grab;
+  user-select: none;
+}
+
+.record-form-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ----- Attached files (in sidebar) ----- */
+.record-form-sidebar .record-form-files {
+  padding: 0;
+}
+
+.record-form-files-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.record-form-dropzone {
+  position: relative;
+  border: 2px dashed var(--progress-green);
+  border-radius: var(--radius);
+  background: rgba(34, 197, 94, 0.06);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.record-form-dropzone:hover,
+.record-form-dropzone-active {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: var(--progress-green);
+}
+
+.record-form-dropzone-icon {
+  color: var(--text-secondary);
+}
+
+.record-form-dropzone-text {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.record-form-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.record-form-file-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.record-form-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-page);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.record-form-file-remove {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s, background 0.2s;
+}
+
+.record-form-file-remove:hover {
+  color: var(--text-primary);
+  background: var(--sidebar-bg);
+}
+
+.record-form-file-badge {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+}
+
+/* ----- Toast ----- */
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  animation: toast-in 0.2s ease;
+}
+
+.toast--success {
+  background: var(--progress-green);
+  color: white;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
 import Dashboard from './pages/Dashboard'
 import Prescriptions from './pages/Prescriptions'
 import Records from './pages/Records'
+import RecordForm from './pages/RecordForm'
 import Appointments from './pages/Appointments'
 import Monitoring from './pages/Monitoring'
 
@@ -63,6 +64,22 @@ function Icon({ name, className }) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  useEffect(() => {
+    function onToast(e) {
+      const { type = 'success', message = 'Successful!' } = e.detail || {}
+      setToast({ type, message })
+    }
+    window.addEventListener('toast', onToast)
+    return () => window.removeEventListener('toast', onToast)
+  }, [])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 2500)
+    return () => clearTimeout(t)
+  }, [toast])
 
   return (
     <div className="app">
@@ -94,6 +111,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/prescriptions" element={<Prescriptions />} />
           <Route path="/records" element={<Records />} />
+          <Route path="/records/new" element={<RecordForm />} />
+          <Route path="/records/:id/edit" element={<RecordForm />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/monitoring" element={<Monitoring />} />
         </Routes>
@@ -101,6 +120,12 @@ function App() {
 
       {menuOpen && (
         <div className="sidebar-overlay" onClick={() => setMenuOpen(false)} aria-hidden />
+      )}
+
+      {toast && (
+        <div className={`toast toast--${toast.type}`} role="status">
+          {toast.message}
+        </div>
       )}
     </div>
   )
