@@ -908,6 +908,56 @@
   vertical-align: middle;
 }
 
+.record-form-td-actions-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.record-form-drag-handle-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  position: relative;
+}
+
+.record-form-row-delete-menu {
+  padding: 0.25rem;
+  min-width: 120px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
+
+.record-form-row-delete-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: background 0.2s;
+}
+
+.record-form-row-delete-btn:hover:not(:disabled) {
+  background: var(--bg-page);
+}
+
+.record-form-row-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .record-form-th-actions {
   background: var(--card-bg);
   text-align: center;
@@ -955,7 +1005,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.5rem;
+  flex-shrink: 0;
   transition: background 0.2s;
 }
 

@@ -81,7 +81,9 @@ export default function RecordForm() {
   const [loading, setLoading] = useState(isEdit)
   const [notFound, setNotFound] = useState(false)
   const [existingAttachmentNames, setExistingAttachmentNames] = useState([])
+  const [deleteMenuOpen, setDeleteMenuOpen] = useState(null) // { rowIndex, top, left } when open
   const fileInputRef = useRef(null)
+  const didDragRef = useRef(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -128,7 +130,14 @@ export default function RecordForm() {
     setDraggedIndex(null)
   }
 
+  function deleteRow(index) {
+    if (rows.length <= 1) return
+    setRows((prev) => prev.filter((_, i) => i !== index))
+    setDeleteMenuOpen(null)
+  }
+
   function handleDragStart(e, index) {
+    didDragRef.current = true
     setDraggedIndex(index)
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', String(index))
@@ -148,7 +157,20 @@ export default function RecordForm() {
 
   function handleDragEnd() {
     setDraggedIndex(null)
+    setTimeout(() => { didDragRef.current = false }, 0)
   }
+
+  useEffect(() => {
+    if (deleteMenuOpen == null) return
+    function handleClickOutside(e) {
+      const target = e.target
+      if (target.closest('.record-form-row-delete-menu') != null) return
+      if (target.closest('.record-form-drag-handle') != null) return
+      setDeleteMenuOpen(null)
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [deleteMenuOpen])
 
   function onFileSelect(files) {
     if (!files?.length) return
@@ -221,6 +243,27 @@ export default function RecordForm() {
 
   return (
     <section className="record-form-page page-placeholder">
+      {deleteMenuOpen != null && (
+        <div
+          className="record-form-row-delete-menu"
+          style={{
+            position: 'fixed',
+            top: deleteMenuOpen.top,
+            left: deleteMenuOpen.left,
+            transform: 'translateX(-50%)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            className="record-form-row-delete-btn"
+            onClick={() => deleteRow(deleteMenuOpen.rowIndex)}
+            disabled={rows.length <= 1}
+          >
+            Delete row
+          </button>
+        </div>
+      )}
       <div className="record-form-header">
         <h1 className="section-title">{isEdit ? 'Edit Medical Record' : 'Add Medical Record'}</h1>
         <div className="record-form-actions">
@@ -265,25 +308,46 @@ export default function RecordForm() {
                 onDrop={(e) => handleDrop(e, index)}
               >
                 <td className="record-form-td-actions">
-                  <button
-                    type="button"
-                    className="record-form-btn-add"
-                    onClick={() => addRowBelow(index)}
-                    aria-label="Add row below"
-                    title="Add row below"
-                  >
-                    +
-                  </button>
-                  <span
-                    className="record-form-drag-handle"
-                    aria-hidden
-                    title="Drag to reorder"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnd={handleDragEnd}
-                  >
-                    ⋮⋮
-                  </span>
+                  <div className="record-form-td-actions-inner">
+                    <span className="record-form-drag-handle-wrap">
+                      <span
+                        className="record-form-drag-handle"
+                        aria-hidden
+                        title="Drag to reorder or click for options"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragEnd={handleDragEnd}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (didDragRef.current) {
+                            didDragRef.current = false
+                            return
+                          }
+                          if (deleteMenuOpen?.rowIndex === index) {
+                            setDeleteMenuOpen(null)
+                            return
+                          }
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          setDeleteMenuOpen({
+                            rowIndex: index,
+                            top: rect.bottom + 6,
+                            left: rect.left + rect.width / 2,
+                          })
+                        }}
+                      >
+                        ⋮⋮
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      className="record-form-btn-add"
+                      onClick={() => addRowBelow(index)}
+                      aria-label="Add row below"
+                      title="Add row below"
+                    >
+                      +
+                    </button>
+                  </div>
                 </td>
                 {ROW_FIELDS.map((field) => (
                   <td key={field} className="record-form-td">
