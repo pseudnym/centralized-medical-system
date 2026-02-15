@@ -14,6 +14,8 @@
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   --radius: 12px;
   --sidebar-width: 200px;
+  --sidebar-collapsed-width: 64px;
+  --sidebar-collapsed-bg: #0c310e;
   --appointments-width: 280px;
 }
 

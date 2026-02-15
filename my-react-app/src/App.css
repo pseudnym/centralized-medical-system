@@ -1,6 +1,6 @@
 .app {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: 1fr;
   min-height: 100vh;
 }
@@ -8,17 +8,102 @@
 /* ----- Sidebar ----- */
 .sidebar {
   background: var(--sidebar-bg);
+  width: var(--sidebar-width);
   padding: 1.25rem 0;
   position: sticky;
   top: 0;
   height: 100vh;
   z-index: 20;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.25s ease-out, background 0.2s ease;
+}
+
+/* Sidebar header: logo + brand (acts as menu toggle). Fixed height so nav doesn't shift on collapse. */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 68px;
+  padding: 0 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition: background 0.2s, padding 0.25s ease-out;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.sidebar-header:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.sidebar.sidebar-collapsed .sidebar-header {
+  padding: 0 1rem;
+  height: 68px;
+}
+
+.sidebar.sidebar-collapsed .sidebar-header:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--teal);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.sidebar-logo::before {
+  content: 'A';
+}
+
+.sidebar.sidebar-collapsed .sidebar-logo {
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+}
+
+.sidebar-brand {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 10rem;
+  transition: opacity 0.2s ease-out, max-width 0.25s ease-out;
+}
+
+.sidebar.sidebar-collapsed .sidebar-brand {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+.sidebar.sidebar-collapsed .sidebar-header {
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .nav-item {
@@ -26,16 +111,18 @@
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.75rem 1.25rem;
+  height: 44px;
+  padding: 0 1.25rem;
   border: none;
   background: transparent;
   color: var(--text-primary);
   font-size: 0.9375rem;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, padding 0.25s ease-out;
   border-left: 3px solid transparent;
   text-decoration: none;
+  box-sizing: border-box;
 }
 
 .nav-item:hover {
@@ -55,6 +142,158 @@
   justify-content: center;
   flex-shrink: 0;
   color: inherit;
+}
+
+.nav-item-label {
+  overflow: hidden;
+  max-width: 12rem;
+  transition: opacity 0.2s ease-out, max-width 0.25s ease-out;
+}
+
+/* Sidebar collapsed: green bar, icons only */
+.sidebar.sidebar-collapsed {
+  width: var(--sidebar-collapsed-width);
+  background: var(--sidebar-collapsed-bg);
+}
+
+.sidebar.sidebar-collapsed .nav-item {
+  height: 44px;
+  padding: 0 1.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-left-color: transparent;
+}
+
+.sidebar.sidebar-collapsed .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar.sidebar-collapsed .nav-item-active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-left-color: transparent;
+}
+
+.sidebar.sidebar-collapsed .nav-item-label {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* Sidebar bottom: profile, settings, logout. Fixed heights so they don't shift on collapse. */
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.sidebar.sidebar-collapsed .sidebar-bottom {
+  border-top-color: rgba(255, 255, 255, 0.15);
+  padding: 1rem 0.5rem;
+  align-items: center;
+}
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 44px;
+  padding: 0 0.75rem;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.06);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.sidebar.sidebar-collapsed .sidebar-profile {
+  justify-content: center;
+  padding: 0 0.875rem;
+  height: 44px;
+  background: transparent;
+}
+
+.sidebar-profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex-shrink: 0;
+}
+
+.sidebar-profile-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 8rem;
+  transition: opacity 0.2s ease-out, max-width 0.25s ease-out;
+}
+
+.sidebar.sidebar-collapsed .sidebar-profile-text {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+.sidebar-bottom-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 44px;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-sizing: border-box;
+}
+
+.sidebar-bottom-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.sidebar.sidebar-collapsed .sidebar-bottom-btn {
+  justify-content: center;
+  height: 44px;
+  padding: 0 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sidebar.sidebar-collapsed .sidebar-bottom-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-bottom-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.sidebar-bottom-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 6rem;
+  transition: opacity 0.2s ease-out, max-width 0.25s ease-out;
+}
+
+.sidebar.sidebar-collapsed .sidebar-bottom-label {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
 }
 
 /* ----- Main content ----- */
@@ -385,7 +624,7 @@
   background: var(--teal-light);
 }
 
-/* ----- Mobile menu toggle ----- */
+/* ----- Menu toggle (hamburger): mobile only when sidebar closed ----- */
 .menu-toggle {
   display: none;
   position: fixed;
@@ -422,11 +661,35 @@
   z-index: 10;
 }
 
+/* ----- Logout modal ----- */
+.logout-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.logout-modal {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  min-width: 280px;
+  min-height: 120px;
+  box-shadow: var(--shadow);
+}
+
 /* ----- Responsive ----- */
 @media (max-width: 1024px) {
   .app {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
+  }
+
+  .app.app-sidebar-collapsed {
+    grid-template-columns: 1fr;
   }
 
   .sidebar {
@@ -436,7 +699,79 @@
     height: 100vh;
     width: var(--sidebar-width);
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
+    transition: transform 0.25s ease-out;
+  }
+
+  .sidebar.sidebar-collapsed {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+  }
+
+  .sidebar.sidebar-collapsed .nav-item {
+    justify-content: flex-start;
+    padding: 0.75rem 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .sidebar.sidebar-collapsed .nav-item:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .sidebar.sidebar-collapsed .nav-item-active {
+    background: var(--teal-active-bg);
+    color: var(--teal);
+    border-left-color: var(--teal);
+  }
+
+  .sidebar.sidebar-collapsed .nav-item-label {
+    display: inline;
+    max-width: 12rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-brand {
+    max-width: 10rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-bottom {
+    border-top-color: rgba(0, 0, 0, 0.06);
+    padding: 1rem 1.25rem;
+    align-items: stretch;
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-profile {
+    justify-content: flex-start;
+    padding: 0 1.25rem;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-profile-text {
+    display: block;
+    max-width: 8rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-bottom-btn {
+    justify-content: flex-start;
+    height: 44px;
+    padding: 0 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-bottom-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .sidebar.sidebar-collapsed .sidebar-bottom-label {
+    display: inline;
+    max-width: 6rem;
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .sidebar-open {
@@ -896,7 +1231,8 @@
 .record-form-th {
   font-weight: 600;
   color: var(--text-secondary);
-  background: var(--bg-page);
+  background: var(--card-bg);
+  text-align: center;
 }
 
 .record-form-th-actions,
@@ -905,6 +1241,61 @@
   padding: 0.5rem;
   border-bottom: 1px solid var(--sidebar-bg);
   vertical-align: middle;
+}
+
+.record-form-td-actions-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.record-form-drag-handle-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  position: relative;
+}
+
+.record-form-row-delete-menu {
+  padding: 0.25rem;
+  min-width: 120px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
+
+.record-form-row-delete-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: background 0.2s;
+}
+
+.record-form-row-delete-btn:hover:not(:disabled) {
+  background: var(--bg-page);
+}
+
+.record-form-row-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.record-form-th-actions {
+  background: var(--card-bg);
+  text-align: center;
 }
 
 .record-form-tr {
@@ -949,7 +1340,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.5rem;
+  flex-shrink: 0;
   transition: background 0.2s;
 }
 
@@ -1090,5 +1481,293 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ----- Prescriptions page ----- */
+.prescriptions-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.prescriptions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.prescriptions-add-btn {
+  flex-shrink: 0;
+}
+
+.prescriptions-loading {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.prescriptions-empty {
+  padding: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.prescriptions-empty p {
+  margin: 0;
+}
+
+.prescriptions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
+  gap: 1.25rem;
+}
+
+/* ----- Medicine card ----- */
+.med-card {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  max-width: 200px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.med-card:hover {
+  background: var(--card-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.med-card-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  min-width: 0;
+}
+
+.med-card-establishment {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.med-card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--teal);
+  flex-shrink: 0;
+}
+
+.med-card-body {
+  padding: 1rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.med-card-pill-icon {
+  color: var(--text-primary);
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.med-card-status {
+  align-self: flex-end;
+  font-size: 0.8125rem;
+  color: var(--progress-green);
+  margin: 0 0 0.25rem;
+}
+
+.med-card-status-bullet {
+  color: var(--progress-green);
+}
+
+.med-card-status--inactive,
+.med-card-status--inactive .med-card-status-bullet {
+  color: var(--streak-red);
+}
+
+.med-card-name {
+  margin: 0 0.2rem 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  width: 100%;
+  text-align: left;
+  align-self: flex-start;
+}
+
+.med-card-instructions {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  width: 100%;
+}
+
+/* ----- Prescription view modal ----- */
+.prescription-view-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.prescription-view-modal {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+.prescription-view-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prescription-view-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.prescription-view-th,
+.prescription-view-td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--sidebar-bg);
+  vertical-align: top;
+}
+
+.prescription-view-th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 40%;
+}
+
+.prescription-view-td {
+  color: var(--text-primary);
+}
+
+.prescription-view-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.prescription-view-close {
+  margin-top: 0;
+}
+
+/* ----- Prescription form ----- */
+.prescription-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.prescription-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.prescription-form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.prescription-form-layout {
+  padding: 1.5rem;
+}
+
+.prescription-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.5rem;
+}
+
+.prescription-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.prescription-form-field-full {
+  grid-column: 1 / -1;
+}
+
+.prescription-form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prescription-form-input,
+.prescription-form-select,
+.prescription-form-textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sidebar-bg);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--card-bg);
+}
+
+.prescription-form-textarea {
+  resize: vertical;
+  min-height: 4rem;
+}
+
+.prescription-form-input:focus,
+.prescription-form-select:focus,
+.prescription-form-textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+@media (max-width: 600px) {
+  .prescription-form-grid {
+    grid-template-columns: 1fr;
   }
 }
