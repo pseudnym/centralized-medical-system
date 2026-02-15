@@ -896,7 +896,8 @@
 .record-form-th {
   font-weight: 600;
   color: var(--text-secondary);
-  background: var(--bg-page);
+  background: var(--card-bg);
+  text-align: center;
 }
 
 .record-form-th-actions,
@@ -905,6 +906,11 @@
   padding: 0.5rem;
   border-bottom: 1px solid var(--sidebar-bg);
   vertical-align: middle;
+}
+
+.record-form-th-actions {
+  background: var(--card-bg);
+  text-align: center;
 }
 
 .record-form-tr {
