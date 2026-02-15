@@ -4,6 +4,7 @@ import './App.css'
 
 import Dashboard from './pages/Dashboard'
 import Prescriptions from './pages/Prescriptions'
+import PrescriptionForm from './pages/PrescriptionForm'
 import Records from './pages/Records'
 import RecordForm from './pages/RecordForm'
 import Appointments from './pages/Appointments'
@@ -110,6 +111,8 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/prescriptions" element={<Prescriptions />} />
+          <Route path="/prescriptions/new" element={<PrescriptionForm />} />
+          <Route path="/prescriptions/:id/edit" element={<PrescriptionForm />} />
           <Route path="/records" element={<Records />} />
           <Route path="/records/new" element={<RecordForm />} />
           <Route path="/records/:id/edit" element={<RecordForm />} />
