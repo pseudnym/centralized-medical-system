@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createRecords, getRecord, updateRecord } from '../api/records'
 
 const ROW_FIELDS = [
-  'patient_id',
   'appointment_id',
   'code',
   'category',
@@ -74,12 +73,14 @@ export default function RecordForm() {
   const isEdit = id != null && id !== ''
   const [title, setTitle] = useState('')
   const [rows, setRows] = useState([emptyRow()])
+  const [medicalProviderId, setMedicalProviderId] = useState('')
   const [attachedFiles, setAttachedFiles] = useState([])
   const [templateSearch, setTemplateSearch] = useState('')
   const [draggedIndex, setDraggedIndex] = useState(null)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(isEdit)
   const [notFound, setNotFound] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [existingAttachmentNames, setExistingAttachmentNames] = useState([])
   const [deleteMenuOpen, setDeleteMenuOpen] = useState(null) // { rowIndex, top, left } when open
   const fileInputRef = useRef(null)
@@ -97,7 +98,25 @@ export default function RecordForm() {
           return
         }
         setTitle(record.title ?? '')
-        setRows([recordToRow(record)])
+        setMedicalProviderId(record.medical_provider_id != null ? String(record.medical_provider_id) : '')
+        if (record._observations?.length) {
+          setRows(
+            record._observations.map((o) => ({
+              patient_id: record.patient_id ?? '',
+              appointment_id: record.appointment_id ?? '',
+              code: o.code ?? '',
+              category: o.category ?? '',
+              value_numeric: o.value_numeric ?? '',
+              value_text: o.value_text ?? '',
+              unit: o.unit ?? '',
+              reference_low: o.reference_low ?? '',
+              reference_high: o.reference_high ?? '',
+              occurrence_datetime: o.occurrence_datetime ? String(o.occurrence_datetime).slice(0, 16) : '',
+            }))
+          )
+        } else {
+          setRows([recordToRow(record)])
+        }
         setExistingAttachmentNames((record._attachments || []).map((a) => a.name))
       })
       .finally(() => setLoading(false))
@@ -190,10 +209,15 @@ export default function RecordForm() {
   }
 
   function handleSave() {
+    setSaveError('')
     if (isEdit) {
       setSaving(true)
-      updateRecord(id, { ...parseRow(rows[0]), title }, attachedFiles)
-        .then((updated) => {
+      updateRecord(id, { ...parseRow(rows[0]), title, medical_provider_id: medicalProviderId || null }, attachedFiles, rows.map(parseRow))
+        .then(({ data: updated, error }) => {
+          if (error) {
+            setSaveError(error.message || 'Failed to save')
+            return
+          }
           if (updated == null) {
             setNotFound(true)
             return
@@ -210,9 +234,15 @@ export default function RecordForm() {
     }
     setSaving(true)
     createRecords(payload, attachedFiles, title)
-      .then(() => {
-        window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Successful!' } }))
-        navigate('/records')
+      .then(({ data, error }) => {
+        if (error) {
+          setSaveError(error.message || 'Failed to save')
+          return
+        }
+        if (data?.length !== undefined) {
+          window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Successful!' } }))
+          navigate('/records')
+        }
       })
       .finally(() => setSaving(false))
   }
@@ -284,6 +314,12 @@ export default function RecordForm() {
           </button>
         </div>
       </div>
+
+      {saveError && (
+        <div className="auth-error" role="alert" style={{ marginBottom: '1rem' }}>
+          {saveError}
+        </div>
+      )}
 
       <div className="record-form-layout">
         <div className="record-form-main">

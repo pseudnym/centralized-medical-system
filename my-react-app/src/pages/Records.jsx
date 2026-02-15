@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getRecords, CATEGORIES } from '../api/records'
+import { getRecords, deleteRecord, CATEGORIES } from '../api/records'
 
 const VIEW_FIELDS = [
   'id',
@@ -95,14 +95,19 @@ export default function Records() {
   const [loading, setLoading] = useState(true)
   const [viewRecordId, setViewRecordId] = useState(null)
   const [openMenuId, setOpenMenuId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
   const menuCloseRef = useRef(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
+  function refreshList() {
     setLoading(true)
     getRecords({ category: categoryFilter || undefined })
       .then(setRecords)
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    refreshList()
   }, [categoryFilter])
 
   useEffect(() => {
@@ -223,6 +228,28 @@ export default function Records() {
                         }}
                       >
                         Edit
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        className="record-card-dropdown-item"
+                        disabled={deletingId === rec.id}
+                        onClick={async () => {
+                          setDeletingId(rec.id)
+                          const { ok, error } = await deleteRecord(rec.id)
+                          setDeletingId(null)
+                          setOpenMenuId(null)
+                          if (ok) {
+                            if (viewRecordId === rec.id) setViewRecordId(null)
+                            refreshList()
+                            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Record removed.' } }))
+                          } else if (error?.message) {
+                            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'error', message: error.message } }))
+                          }
+                        }}
+                      >
+                        {deletingId === rec.id ? 'Deleting…' : 'Delete'}
                       </button>
                     </li>
                   </ul>
