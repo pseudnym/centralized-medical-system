@@ -31,10 +31,6 @@ function now() {
 }
 
 /**
- * @param {{ category?: string }} [opts]
- * @returns {Promise<Array<Record>>} Records sorted newest first
- */
-/**
  * @param {number} id
  * @returns {Promise<Record | null>}
  */
@@ -47,41 +43,23 @@ export function getRecord(id) {
 
 /**
  * @param {number} id
- * @param {Partial<Record>} record
- * @param {Array<{ name: string, file: File }>} [attachedFiles]
- * @returns {Promise<Record | null>} Updated record or null if not found
+ * @returns {Promise<boolean>} true if deleted, false if not found
  */
-export function updateRecord(id, record, attachedFiles = []) {
+export function deleteRecord(id) {
   return Promise.resolve().then(() => {
     const records = loadFromStorage()
     const index = records.findIndex((r) => r.id === Number(id))
-    if (index === -1) return null
-    const existing = records[index]
-    const updated_at = now()
-    const updated = {
-      ...existing,
-      title: record.title ?? existing.title,
-      patient_id: record.patient_id ?? existing.patient_id,
-      appointment_id: record.appointment_id ?? existing.appointment_id,
-      code: record.code ?? existing.code,
-      category: record.category ?? existing.category,
-      value_numeric: record.value_numeric ?? existing.value_numeric,
-      value_text: record.value_text ?? existing.value_text,
-      unit: record.unit ?? existing.unit,
-      reference_low: record.reference_low ?? existing.reference_low,
-      reference_high: record.reference_high ?? existing.reference_high,
-      occurrence_datetime: record.occurrence_datetime ?? existing.occurrence_datetime,
-      updated_at,
-      _attachments: attachedFiles.length
-        ? [...(existing._attachments || []), ...attachedFiles.map((f) => ({ name: f.name }))]
-        : existing._attachments || [],
-    }
-    records[index] = updated
+    if (index === -1) return false
+    records.splice(index, 1)
     saveToStorage(records)
-    return updated
+    return true
   })
 }
 
+/**
+ * @param {{ category?: string }} [opts]
+ * @returns {Promise<Array<Record>>} Records sorted newest first
+ */
 export function getRecords(opts = {}) {
   return Promise.resolve().then(() => {
     const records = loadFromStorage()
@@ -129,6 +107,43 @@ export function createRecord(record, attachedFiles = []) {
     records.push(created)
     saveToStorage(records)
     return created
+  })
+}
+
+/**
+ * @param {number} id
+ * @param {Partial<Record>} record
+ * @param {Array<{ name: string, file: File }>} [attachedFiles]
+ * @returns {Promise<Record | null>} Updated record or null if not found
+ */
+export function updateRecord(id, record, attachedFiles = []) {
+  return Promise.resolve().then(() => {
+    const records = loadFromStorage()
+    const index = records.findIndex((r) => r.id === Number(id))
+    if (index === -1) return null
+    const existing = records[index]
+    const updated_at = now()
+    const updated = {
+      ...existing,
+      title: record.title ?? existing.title,
+      patient_id: record.patient_id ?? existing.patient_id,
+      appointment_id: record.appointment_id ?? existing.appointment_id,
+      code: record.code ?? existing.code,
+      category: record.category ?? existing.category,
+      value_numeric: record.value_numeric ?? existing.value_numeric,
+      value_text: record.value_text ?? existing.value_text,
+      unit: record.unit ?? existing.unit,
+      reference_low: record.reference_low ?? existing.reference_low,
+      reference_high: record.reference_high ?? existing.reference_high,
+      occurrence_datetime: record.occurrence_datetime ?? existing.occurrence_datetime,
+      updated_at,
+      _attachments: attachedFiles.length
+        ? [...(existing._attachments || []), ...attachedFiles.map((f) => ({ name: f.name }))]
+        : existing._attachments || [],
+    }
+    records[index] = updated
+    saveToStorage(records)
+    return updated
   })
 }
 
