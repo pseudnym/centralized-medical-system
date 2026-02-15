@@ -28,10 +28,9 @@ def login():
         sessionData = supabase.auth.sign_in_with_password({"email": insert_login_email, "password": insert_login_password}) #contains session data
     except AuthApiError as e:
         print("Login failed.")
-        login()
 
     user_id = sessionData.user.id # the short UID
-    print("User ID:", user_id)
+    #print("User ID:", user_id)
 
     if sessionData.user:
         print("Signed in successfully!")
@@ -43,12 +42,14 @@ def login():
         except Exception as e:
             print("Error during signup:", e)
 
-    return 
+    return user_id, insert_login_password;
 
 # [SEND DATA]
-'''
-def send_patient(name, email, dob, user_id): # SCUFFED FUNCTION BUT YOU GET THE IDEA BEHIND THE METH OF THE MADNESS
+#user_id, insert_email = login()
+#insert_name = input("What's your name: ")
+#insert_dob = input("Enter your date of birth in YYYY-MM-DD format: ")
 
+def send_patient(name, email, dob, user_id): # SCUFFED FUNCTION BUT YOU GET THE IDEA BEHIND THE METH OF THE MADNESS
     patient = {
         "name": name,
         "email": email,
@@ -57,19 +58,17 @@ def send_patient(name, email, dob, user_id): # SCUFFED FUNCTION BUT YOU GET THE 
     }
     response = supabase.table("patient").insert(patient).execute()
 
-appointment = {
-    "patient_id": 1,
-    "scheduled_for": "2026-2-14 6:30",
-    "physician_name": "Dr. Contour",
-    "reason": "lou.gehrig@example.com"
-}
-response = supabase.table("appointment").insert(appointment).execute()
+def send_appointment():
+    appointment = {
+        "patient_id": 1,
+        "scheduled_for": "2026-2-14 6:30",
+        "physician_name": "Dr. Contour",
+        "reason": "lou.gehrig@example.com",
+        "user_id": os.getenv("user_id")
+    }
+    response = supabase.table("appointment").insert(appointment).execute()
 
 #response = (supabase.table("patient").select("*").execute())
 #print(response)
-#signup()
-#insert_name = input("What's your name: ")
-#insert_email = 
-#insert_dob = input("Enter your date of birth in YYYY-MM-DD format: ")
-#send_patient()
-'''
+
+#send_patient(insert_name, insert_email, insert_dob, user_id)
